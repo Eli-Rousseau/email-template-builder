@@ -3,15 +3,20 @@ interface Tag {
   self_clausing: boolean;
 }
 
+interface Style {
+  name: string;
+  value: string;
+}
+
 interface Attribute {
   name: string;
-  values: string[];
+  values: string[] | Style[];
 }
 
 interface Component {
   tag: Tag;
   attributes?: Attribute[];
-  children?: Component[] | string;
+  children?: Component[] | string | (Component | string)[];
 }
 
-export { Component, Attribute, Tag };
+export { Component, Attribute, Tag, Style };
