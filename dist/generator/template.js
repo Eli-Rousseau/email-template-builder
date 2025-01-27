@@ -6,9 +6,9 @@ class Template {
         this.spaces = "  ";
     }
     construct() {
-        return this.generateComponents(this.configuration, 0);
+        return this.generateComponent(this.configuration, 0);
     }
-    generateComponents(component, level) {
+    generateComponent(component, level) {
         const indent = this.spaces.repeat(level);
         if (typeof component === "string") {
             return indent + component;
@@ -52,31 +52,37 @@ class Template {
     generateComponentChildren(component, level) {
         const indent = this.spaces.repeat(level);
         let children = "";
-        if (typeof component.children === "string") {
+        if (component.children &&
+            component.children.length === 1 &&
+            typeof component.children[0] === "string") {
             if (component.tag.name === "script") {
-                let codeLines = component.children.split("\n");
+                let codeLines = component.children[0].split("\n");
                 children =
-                    "\n" +
-                        indent +
+                    indent +
                         this.spaces +
                         codeLines
                             .map((line) => line.replace(/\t/g, this.spaces))
-                            .join("\n" + indent + this.spaces) +
-                        "\n" +
-                        indent;
+                            .join("\n" + indent + this.spaces);
             }
             else {
-                children = component.children;
+                children = indent + this.spaces + component.children[0];
             }
+        }
+        else if (component.tag.name === "style") {
+            children = this.generateComponentStyles(component.children, level);
         }
         else if (Array.isArray(component.children)) {
             children = component.children
                 .map((child) => {
-                return this.generateComponents(child, level + 1);
+                return this.generateComponent(child, level + 1);
             })
                 .join("\n");
         }
         return children;
+    }
+    generateComponentStyles(blocks, level) {
+        let styles = "";
+        return styles;
     }
 }
 exports.default = Template;

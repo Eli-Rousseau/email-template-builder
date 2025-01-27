@@ -1,3 +1,4 @@
+// HTML Component
 interface Tag {
   name: string;
   self_clausing: boolean;
@@ -16,7 +17,29 @@ interface Attribute {
 interface Component {
   tag: Tag;
   attributes?: Attribute[];
-  children?: Component[] | string | (Component | string)[];
+  children?: (Component | string | CSSBlock)[];
 }
 
-export { Component, Attribute, Tag, Style };
+// CSS Generic Block
+interface CSSBlock {
+  block: "rule" | "media" | "key-frame" | "font-face";
+}
+
+// CSS Rule Block
+interface CSSRuleProperty {
+  name: string;
+  value: string;
+}
+
+interface CSSRuleSelector {
+  type: "basic" | "relational" | "pseudo-class" | "pseudo-element";
+  value: string;
+  relation?: CSSRuleSelector;
+}
+
+interface CSSRule extends CSSBlock {
+  selectors: CSSRuleSelector[];
+  properties: CSSRuleProperty[];
+}
+
+export { Component, CSSBlock, CSSRule };

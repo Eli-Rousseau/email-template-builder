@@ -1,4 +1,4 @@
-import { Component, Attribute, Tag } from "../components/model";
+import { Component, CSSBlock, CSSRule } from "../components/model";
 
 class Template {
   private configuration: Component;
@@ -74,30 +74,42 @@ class Template {
     const indent: string = this.spaces.repeat(level);
 
     let children: string = "";
-    if (typeof component.children === "string") {
+
+    if (
+      component.children &&
+      component.children.length === 1 &&
+      typeof component.children[0] === "string"
+    ) {
       if (component.tag.name === "script") {
-        let codeLines = component.children.split("\n");
+        let codeLines = component.children[0].split("\n");
         children =
-          "\n" +
           indent +
           this.spaces +
           codeLines
             .map((line) => line.replace(/\t/g, this.spaces))
-            .join("\n" + indent + this.spaces) +
-          "\n" +
-          indent;
+            .join("\n" + indent + this.spaces);
       } else {
-        children = component.children;
+        children = indent + this.spaces + component.children[0];
       }
+    } else if (component.tag.name === "style") {
+      children = this.generateComponentStyles(
+        component.children as CSSBlock[],
+        level
+      );
     } else if (Array.isArray(component.children)) {
       children = component.children
         .map((child) => {
-          return this.generateComponent(child, level + 1);
+          return this.generateComponent(child as Component, level + 1);
         })
         .join("\n");
     }
 
     return children;
+  }
+
+  private generateComponentStyles(blocks: CSSBlock[], level: number): string {
+    let styles: string = "";
+    return styles;
   }
 }
 
